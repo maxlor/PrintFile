@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>printer.svg</file>
         <file>printer.png</file>
+        <file>LICENSE.html</file>
     </qresource>
 </RCC>

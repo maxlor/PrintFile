@@ -28,6 +28,7 @@ private slots:
 	void chooseWatchFile();
 	void watchTimeout();
 	void enableWatchChanged(bool enabled);
+    void watchPathChanged();
 	
 	void printResult(Printer::Result result);
 	void testResult(Printer::Result result);
@@ -40,6 +41,7 @@ private slots:
 	void on_actionTest_triggered();
 	
 private:
+    void showLicense();
 	QString selectFile(const QString &caption = QString());
 	bool minimizeToTray();
 	
