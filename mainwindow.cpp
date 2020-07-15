@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QPixmap>
 #include <QPushButton>
 #include <QSettings>
 #include <QSpacerItem>
@@ -19,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	
 	QSettings settings;
 	_currentDir = settings.value("currentdir").toString();
-    QRect geometry = settings.value("geometry").toRect();
+	QRect geometry = settings.value("geometry").toRect();
 	if (geometry.isValid()) { setGeometry(geometry); }
 	ui->editAddress->setText(settings.value("address").toString());
 	ui->editPort->setValue(settings.value("port", 9100).toInt());
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->editPort, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
 	        this, &MainWindow::savePrinter);
 	connect(ui->groupFile, &QGroupBox::clicked, this, &MainWindow::enableWatchChanged);
-    connect(ui->editWatchPath, &QLineEdit::textChanged, this, &MainWindow::watchPathChanged);
+	connect(ui->editWatchPath, &QLineEdit::textChanged, this, &MainWindow::watchPathChanged);
 	connect(ui->buttonChooseFile, &QAbstractButton::clicked, this, &MainWindow::chooseWatchFile);
 	connect(_printer, &Printer::printResult, this, &MainWindow::printResult);
 	connect(_printer, &Printer::testResult, this, &MainWindow::testResult);
@@ -75,7 +76,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::savePrinter() {
 	const QString address = ui->editAddress->text();
 	const int port = ui->editPort->value();
-	        
+
 	_printer->setAddress(address);
 	_printer->setPort(port);
 	
@@ -89,7 +90,7 @@ void MainWindow::chooseWatchFile() {
 	const QString path = selectFile(tr("Select Watch File"));
 	if (path.isEmpty()) { return; }
 	
-    ui->editWatchPath->setText(path);
+	ui->editWatchPath->setText(path);
 }
 
 
@@ -126,12 +127,12 @@ void MainWindow::enableWatchChanged(bool enabled) {
 	} else {
 		_watchTimer.stop();
 	}
-    QSettings().setValue("watchenabled", enabled);
+	QSettings().setValue("watchenabled", enabled);
 }
 
 
 void MainWindow::watchPathChanged() {
-    QSettings().setValue("watchfile", ui->editWatchPath->text());
+	QSettings().setValue("watchfile", ui->editWatchPath->text());
 }
 
 
@@ -211,39 +212,39 @@ void MainWindow::trayIconActivated() {
 
 
 void MainWindow::on_actionAbout_triggered() {
-    QMessageBox box;
-    box.setWindowTitle(tr("About %1").arg(QApplication::applicationDisplayName()));
-    box.setIconPixmap(QPixmap(":/printer.svg").scaled(64, 64));
-    box.setTextFormat(Qt::RichText);
-    box.setText(tr("<p><b>%1 %2</b></p>"
-                   "<p>&copy; 2020 Benjamin Lutz</p>"
-                   "<p>This program sends files to a printer's AppSocket port. It's intended to "
-                   "be used in conjunction with VMware Player's capability to redirect a "
-                   "parallel port to a file.</p>"
-                   "<p>This program is free software: you can redistribute it and/or modify it "
-                   "under the terms of the GNU General Public License as published by the Free "
-                   "Software Foundation, either version 3 of the License, or (at your option) "
-                   "any later version.</p>"
-                   "<p>This program is distributed in the hope that it will be useful, but "
-                   "WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY "
-                   "or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for "
-                   "more details.</p>"
-                   "<p>Click the license button below to see the full text of the license, "
-                   "or see <a href=\"https://www.gnu.org/licenses/\">https://www.gnu.org/licenses/</a>.</p>"
-                   "<p>Icon made by <a href=\"https://www.flaticon.com/authors/freepik\">Freepik</a> "
-                   "from <a href=\"https://www.flaticon.com\">www.flaticon.com</a>.</p>")
-                .arg(QApplication::applicationDisplayName()).arg(QApplication::applicationVersion()));
-    QPushButton *licenseButton = box.addButton(tr("License"), QMessageBox::AcceptRole);
-    QPushButton *aboutQtButton = box.addButton(tr("About Qt"), QMessageBox::AcceptRole);
-    box.addButton(QMessageBox::Close);
-    box.setDefaultButton(QMessageBox::Close);
-    box.exec();
+	QMessageBox box;
+	box.setWindowTitle(tr("About %1").arg(QApplication::applicationDisplayName()));
+	box.setIconPixmap(QPixmap(":/printer.png"));
+	box.setTextFormat(Qt::RichText);
+	box.setText(tr("<p><b>%1 %2</b></p>"
+	               "<p>&copy; 2020 Benjamin Lutz</p>"
+	               "<p>This program sends files to a printer's AppSocket port. It's intended to "
+	               "be used in conjunction with VMware Player's capability to redirect a "
+	               "parallel port to a file.</p>"
+	               "<p>This program is free software: you can redistribute it and/or modify it "
+	               "under the terms of the GNU General Public License as published by the Free "
+	               "Software Foundation, either version 3 of the License, or (at your option) "
+	               "any later version.</p>"
+	               "<p>This program is distributed in the hope that it will be useful, but "
+	               "WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY "
+	               "or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for "
+	               "more details.</p>"
+	               "<p>Click the license button below to see the full text of the license, "
+	               "or see <a href=\"https://www.gnu.org/licenses/\">https://www.gnu.org/licenses/</a>.</p>"
+	               "<p>Icon made by <a href=\"https://www.flaticon.com/authors/freepik\">Freepik</a> "
+	               "from <a href=\"https://www.flaticon.com\">www.flaticon.com</a>.</p>")
+	            .arg(QApplication::applicationDisplayName()).arg(QApplication::applicationVersion()));
+	QPushButton *licenseButton = box.addButton(tr("License"), QMessageBox::AcceptRole);
+	QPushButton *aboutQtButton = box.addButton(tr("About Qt"), QMessageBox::AcceptRole);
+	box.addButton(QMessageBox::Close);
+	box.setDefaultButton(QMessageBox::Close);
+	box.exec();
 
-    if (box.clickedButton() == licenseButton) {
-        showLicense();
-    } else if (box.clickedButton() == aboutQtButton) {
-        QMessageBox::aboutQt(this);
-    }
+	if (box.clickedButton() == licenseButton) {
+		showLicense();
+	} else if (box.clickedButton() == aboutQtButton) {
+		QMessageBox::aboutQt(this);
+	}
 }
 
 
@@ -271,21 +272,21 @@ void MainWindow::on_actionQuit_triggered() {
 void MainWindow::on_actionTest_triggered() {
 	ui->actionTest->setEnabled(false);
 	ui->labelStatus->setText("...");
-    _printer->test();
+	_printer->test();
 }
 
 
 void MainWindow::showLicense() {
-    LicenseDialog dialog;
-    dialog.setWindowTitle(tr("%1 License").arg(QApplication::applicationDisplayName()));
-    QFile file(":/LICENSE.html");
-    if (file.open(QIODevice::ReadOnly)) {
-        dialog.setText(QString::fromUtf8(file.readAll()));
-        file.close();
-    } else {
-        dialog.setText(tr("Error opening license file: %1").arg(file.errorString()));
-    }
-    dialog.exec();
+	LicenseDialog dialog;
+	dialog.setWindowTitle(tr("%1 License").arg(QApplication::applicationDisplayName()));
+	QFile file(":/LICENSE.html");
+	if (file.open(QIODevice::ReadOnly)) {
+		dialog.setText(QString::fromUtf8(file.readAll()));
+		file.close();
+	} else {
+		dialog.setText(tr("Error opening license file: %1").arg(file.errorString()));
+	}
+	dialog.exec();
 }
 
 
