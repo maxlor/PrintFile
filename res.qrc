@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>printer.svg</file>
+        <file>printer.png</file>
+    </qresource>
+</RCC>
